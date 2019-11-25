@@ -4,7 +4,7 @@ Lotus is an experimental implementation of the Filecoin Distributed Storage Netw
 
 ## Background
 
-There is no docker and docker-compose supports in official project yet, so I forked a [repo](https://github.com/ldoublewood/lotus.git) for lotus with docker suppport etc. And meanwhile added this repo for docker-compose
+There is no docker and docker-compose supports in official project yet, so I forked a [repo](https://github.com/ldoublewood/lotus.git) for lotus with docker suppport etc. And meanwhile I added this repo for docker-compose
 
 ## Usage
 
@@ -18,6 +18,7 @@ docker build  . -t registry.example.com/lotus
 cd ..
 git clone https://github.com/ldoublewood/lotus-docker-compose.git
 cd lotus-docker-compose
+cp .env.example .env
 docker-compose up
 
 ```
