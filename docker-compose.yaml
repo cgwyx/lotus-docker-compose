@@ -26,7 +26,6 @@ services:
       - .env
     environment:
       LOTUS_STORAGE_PATH: /data/lotusstorage
-      LOTUS_PATH: /data/lotus
     command: ./lotus-storage-miner run      
     volumes:
       - data:/data
@@ -34,14 +33,12 @@ services:
   init_storage_miner:
     image : ${REPO_HOST}/lotus:${REPO_TAG}
     container_name: ${PREFIX}_init_storage_miner
-#    depends_on:
-#      - lotus
     env_file:
       - .env
     environment:
       LOTUS_STORAGE_PATH: /data/lotusstorage
       LOTUS_PATH: /data/lotus
-    command: ./lotus-storage-miner init --actor=${MINER_ACTOR} --owner=${MINER_OWNER}
+    command: bash -c 'if [ ! -d "/data/lotusstorage" ]; then ./lotus-storage-miner init --actor=${MINER_ACTOR} --owner=${MINER_OWNER}; fi'
     volumes:
       - data:/data
       - paramcache:/var/tmp/filecoin-proof-parameters
