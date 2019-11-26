@@ -7,39 +7,57 @@ services:
     restart: unless-stopped
     env_file:
       - .env
-    expose:
-      - "1234"
+    environment:
+      LOTUS_STORAGE_PATH: /data/lotusstorage
+      LOTUS_PATH: /data/lotus
+    ports:
+      - 1234:1234
     command: ./lotus daemon
     volumes:
-      - lotus:/root/.lotus
-      - paramcache:/var/tmp/filecoin-proof-parameters    
+      - data:/data
+      - paramcache:/var/tmp/filecoin-proof-parameters
+      
   lotus_storage_miner:
     image : ${REPO_HOST}/lotus:${REPO_TAG}
     container_name: ${PREFIX}_lotus_storage_miner
     depends_on:
       - lotus
+    env_file:
+      - .env
+    environment:
+      LOTUS_STORAGE_PATH: /data/lotusstorage
+      LOTUS_PATH: /data/lotus
     command: ./lotus-storage-miner run      
     volumes:
-      - lotus:/root/.lotus
-      - lotusstorage:/root/.lotusstorage
-      - paramcache:/var/tmp/filecoin-proof-parameters    
+      - data:/data
+      - paramcache:/var/tmp/filecoin-proof-parameters
+  init_storage_miner:
+    image : ${REPO_HOST}/lotus:${REPO_TAG}
+    container_name: ${PREFIX}_init_storage_miner
+#    depends_on:
+#      - lotus
+    env_file:
+      - .env
+    environment:
+      LOTUS_STORAGE_PATH: /data/lotusstorage
+      LOTUS_PATH: /data/lotus
+    command: ./lotus-storage-miner init --actor=${MINER_ACTOR} --owner=${MINER_OWNER}
+    volumes:
+      - data:/data
+      - paramcache:/var/tmp/filecoin-proof-parameters
+  
+
 volumes:
-  lotus:
+  data:
     driver: local
     driver_opts:
       type: none
-      device: $PWD/data/lotus
-      o: bind
-  lotusstorage:
-    driver: local
-    driver_opts:
-      type: none
-      device: $PWD/data/lotus
+      device: $PWD/data
       o: bind
   paramcache:
     driver: local
     driver_opts:
       type: none
-      device: $PWD/data/paramcache
+      device: $PWD/var/paramcache
       o: bind
   
