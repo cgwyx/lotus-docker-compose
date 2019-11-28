@@ -38,7 +38,8 @@ services:
     environment:
       LOTUS_STORAGE_PATH: /data/lotusstorage
       LOTUS_PATH: /data/lotus
-    command: bash -c 'if [ ! -d "/data/lotusstorage" ]; then ./lotus-storage-miner init --actor=${MINER_ACTOR} --owner=${MINER_OWNER}; fi'
+#    command: bash -c 'if [ ! -d "/data/lotusstorage" ]; then ./lotus-storage-miner init --actor=${MINER_ACTOR} --owner=${MINER_OWNER}; fi'
+    command: bash -c 'if [ ! -d "/data/lotusstorage" ]; then ./lotus-storage-miner init --owner=${MINER_OWNER}; fi'
     volumes:
       - data:/data
       - paramcache:/var/tmp/filecoin-proof-parameters

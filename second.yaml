@@ -1,0 +1,37 @@
+version: '3'
+
+services:
+  lotus_storage_miner2:
+    image : ${REPO_HOST}/lotus:${REPO_TAG}
+    container_name: ${PREFIX}_lotus_storage_miner2
+    depends_on:
+      - lotus
+    env_file:
+      - .env
+    environment:
+      LOTUS_STORAGE_PATH: /data/lotusstorage
+    command: ./lotus-storage-miner run      
+    volumes:
+      - data2:/data
+      - paramcache:/var/tmp/filecoin-proof-parameters
+  init_storage_miner2:
+    image : ${REPO_HOST}/lotus:${REPO_TAG}
+    container_name: ${PREFIX}_init_storage_miner2
+    env_file:
+      - .env
+    environment:
+      LOTUS_STORAGE_PATH: /data/lotusstorage
+      LOTUS_PATH: /data/lotus
+    command: bash -c 'if [ ! -d "/data/lotusstorage" ]; then ./lotus-storage-miner init --owner=${MINER_OWNER}; fi'
+    volumes:
+      - data2:/data
+      - paramcache:/var/tmp/filecoin-proof-parameters
+  
+volumes:
+  data2:
+    driver: local
+    driver_opts:
+      type: none
+      device: $PWD/data2
+      o: bind
+  

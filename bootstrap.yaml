@@ -1,0 +1,57 @@
+version: '3'
+
+services:
+  lotusboot:
+    image : ${REPO_HOST}/lotus:bootstrap
+    container_name: ${PREFIX}_lotusboot
+    restart: unless-stopped
+    env_file:
+      - .env
+#    ports:
+#      - 1234:1234
+#      - 5678:5678
+    environment:
+      LOTUS_STORAGE_PATH: /data/lotusstorage
+      LOTUS_PATH: /data/lotus
+    volumes:
+      - databoot:/data
+      - paramcache:/var/tmp/filecoin-proof-parameters
+    command: bash -c 'if [ ! -d "/data/lotus" ]; then cp -r /root/.lotus /data/lotus; fi && ./lotus daemon --bootstrap=false'
+  lotusboot_storage_miner:
+    image : ${REPO_HOST}/lotus:${REPO_TAG}
+    container_name: ${PREFIX}_lotusboot_storage_miner
+    depends_on:
+      - lotusboot
+    env_file:
+      - .env
+    environment:
+      LOTUS_STORAGE_PATH: /data/lotusstorage
+      LOTUS_PATH: /data/lotus
+      FULLNODE_API: ${BOOT_FULLNODE_API}
+      FULLNODE_TOKEN: ${BOOT_FULLNODE_TOKEN}
+    command: ./lotus-storage-miner run
+    volumes:
+      - databoot:/data
+      - paramcache:/var/tmp/filecoin-proof-parameters
+  init_boot_storage_miner:
+    image : ${REPO_HOST}/lotus:${REPO_TAG}
+    container_name: ${PREFIX}_init_boot_storage_miner
+    env_file:
+      - .env
+    environment:
+      LOTUS_STORAGE_PATH: /data/lotusstorage
+      LOTUS_PATH: /data/lotus
+      FULLNODE_API: ${BOOT_FULLNODE_API}
+      FULLNODE_TOKEN: ${BOOT_FULLNODE_TOKEN}
+    command: bash -c 'if [ ! -d "/data/lotusstorage" ]; then ./lotus-storage-miner init --actor=t0101 --genesis-miner; fi'
+    volumes:
+      - databoot:/data
+      - paramcache:/var/tmp/filecoin-proof-parameters
+  
+volumes:
+  databoot:
+    driver: local
+    driver_opts:
+      type: none
+      device: $PWD/databoot
+      o: bind
