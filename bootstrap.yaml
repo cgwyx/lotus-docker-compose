@@ -2,7 +2,7 @@ version: '3'
 
 services:
   lotusboot:
-    image : ${REPO_HOST}/lotus:bootstrap
+    image : ${REPO_HOST}/lotus-private-boot
     container_name: ${PREFIX}_lotusboot
     restart: unless-stopped
     env_file:
@@ -18,7 +18,7 @@ services:
       - paramcache:/var/tmp/filecoin-proof-parameters
     command: bash -c 'if [ ! -d "/data/lotus" ]; then cp -r /root/.lotus /data/lotus; fi && ./lotus daemon --bootstrap=false'
   lotusboot_storage_miner:
-    image : ${REPO_HOST}/lotus:${REPO_TAG}
+    image : ${REPO_HOST}/lotus-private:${REPO_TAG}
     container_name: ${PREFIX}_lotusboot_storage_miner
     depends_on:
       - lotusboot
@@ -34,7 +34,7 @@ services:
       - databoot:/data
       - paramcache:/var/tmp/filecoin-proof-parameters
   init_boot_storage_miner:
-    image : ${REPO_HOST}/lotus:${REPO_TAG}
+    image : ${REPO_HOST}/lotus-private:${REPO_TAG}
     container_name: ${PREFIX}_init_boot_storage_miner
     env_file:
       - .env

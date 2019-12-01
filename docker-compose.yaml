@@ -2,7 +2,7 @@ version: '3'
 
 services:
   lotus:
-    image : ${REPO_HOST}/lotus:${REPO_TAG}
+    image : ${REPO_HOST}/lotus-private:${REPO_TAG}
     container_name: ${PREFIX}_lotus
     restart: unless-stopped
     env_file:
@@ -18,7 +18,7 @@ services:
       - paramcache:/var/tmp/filecoin-proof-parameters
       
   lotus_storage_miner:
-    image : ${REPO_HOST}/lotus:${REPO_TAG}
+    image : ${REPO_HOST}/lotus-private:${REPO_TAG}
     container_name: ${PREFIX}_lotus_storage_miner
     depends_on:
       - lotus
@@ -31,7 +31,7 @@ services:
       - data:/data
       - paramcache:/var/tmp/filecoin-proof-parameters
   init_storage_miner:
-    image : ${REPO_HOST}/lotus:${REPO_TAG}
+    image : ${REPO_HOST}/lotus-private:${REPO_TAG}
     container_name: ${PREFIX}_init_storage_miner
     env_file:
       - .env
